@@ -1,23 +1,31 @@
-{ stdenv, fetchurl, fetchFromGitHub, cmake, qt4, quazip, qt-mobility, qxt, pythonPackages, glib }:
+{ stdenv, fetchFromGitHub, cmake, qt5, libsForQt5, qt-mobility, python3Packages, pythonqt, glib }:
 
+let
+  pythonPackages = python3Packages;
+in
 with stdenv.lib;
 stdenv.mkDerivation rec {
   name = "screencloud-${version}";
-  version = "1.2.0";
+  version = "1.3.0";
 
-  # API Keys. According to the author of the AUR package, these are only used
-  # for tracking usage.
-  consumerKey = "23e747012c68601f27ab69c6de129ed70552d55b6";
-  consumerSecret = "4701cb00c1bd357bbcae7c3d713dd216";
-  
+  # # API Keys. According to the author of the AUR package, these are only used
+  # # for tracking usage.
+  # consumerKey = "23e747012c68601f27ab69c6de129ed70552d55b6";
+  # consumerSecret = "4701cb00c1bd357bbcae7c3d713dd216";
+
   src = fetchFromGitHub {
     owner = "olav-st";
     repo = "screencloud";
     rev = "v${version}";
-    sha256 = "1s0dxa1sa37nvna5nfqdsp294810favj68qb7ghl78qna7zw0cim";
+    sha256 = "1i4bac3mxhvh7ir3h1kwn40d66bkpw8v8a0lhblggp2d1mqcxw3j";
   };
 
-  buildInputs = [ cmake qt4 quazip qt-mobility qxt pythonPackages.python pythonPackages.pycrypto ];
+  buildInputs = with qt5; [
+    cmake
+    qtbase qtsvg qtmultimedia qtx11extras
+    libsForQt5.quazip qt-mobility pythonqt
+    pythonPackages.python pythonPackages.pyqt5 pythonPackages.pycrypto
+  ];
 
   patchPhase = ''
     # Required to make the configure script work. Normally, screencloud's
@@ -35,17 +43,13 @@ stdenv.mkDerivation rec {
   dontAddPrefix = true;
 
   cmakeFlags = [
-    "-DQXT_QXTCORE_INCLUDE_DIR=${qxt}/include/QxtCore"
-    "-DQXT_QXTCORE_LIB_RELEASE=${qxt}/lib/libQxtCore.so"
-    "-DQXT_QXTGUI_INCLUDE_DIR=${qxt}/include/QxtGui"
-    "-DQXT_QXTGUI_LIB_RELEASE=${qxt}/lib/libQxtGui.so"
-    "-DCONSUMER_KEY_SCREENCLOUD=${consumerKey}"
-    "-DCONSUMER_SECRET_SCREENCLOUD=${consumerSecret}"
+    # "-DQXT_QXTCORE_INCLUDE_DIR=${qxt}/include/QxtCore"
+    # "-DQXT_QXTCORE_LIB_RELEASE=${qxt}/lib/libQxtCore.so"
+    # "-DQXT_QXTGUI_INCLUDE_DIR=${qxt}/include/QxtGui"
+    # "-DQXT_QXTGUI_LIB_RELEASE=${qxt}/lib/libQxtGui.so"
+    # "-DCONSUMER_KEY_SCREENCLOUD=${consumerKey}"
+    # "-DCONSUMER_SECRET_SCREENCLOUD=${consumerSecret}"
   ];
-
-  setSourceRoot = ''
-    sourceRoot=$(echo */screencloud)
-  '';
 
   preConfigure = ''
     # This needs to be set in preConfigure instead of cmakeFlags in order to
@@ -71,7 +75,7 @@ stdenv.mkDerivation rec {
     homepage = https://screencloud.net/;
     description = "Client for Screencloud, an easy to use screenshot sharing tool";
     license = stdenv.lib.licenses.gpl2;
-    maintainers = with stdenv.lib.maintainers; [ forkk ];
-    platforms = with stdenv.lib.platforms; linux;
+    maintainers = with stdenv.lib.maintainers; [ forkk lezed1 ];
+    platforms = stdenv.lib.platforms.linux;
   };
 }

@@ -4459,9 +4459,7 @@ with pkgs;
 
   screen-message = callPackage ../tools/X11/screen-message { };
 
-  screencloud = callPackage ../applications/graphics/screencloud {
-    quazip = quazip_qt4;
-  };
+  screencloud = callPackage ../applications/graphics/screencloud { };
 
   quazip_qt4 = libsForQt5.quazip.override {
     qtbase = qt4; qmake = qmake4Hook;
@@ -10519,6 +10517,8 @@ with pkgs;
   ptlib = callPackage ../development/libraries/ptlib {};
 
   pugixml = callPackage ../development/libraries/pugixml { };
+
+  pythonqt = callPackage ../development/libraries/pythonqt { };
 
   re2 = callPackage ../development/libraries/re2 { };
 
