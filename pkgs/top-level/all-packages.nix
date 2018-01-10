@@ -3261,6 +3261,8 @@ with pkgs;
 
   libwebsockets = callPackage ../development/libraries/libwebsockets { };
 
+  lightscreen = callPackage ../tools/graphics/lightscreen { };
+
   limesurvey = callPackage ../servers/limesurvey { };
 
   localtime = callPackage ../tools/system/localtime { };
