@@ -3,17 +3,15 @@
 , gnome2, dbus, nss, nspr, alsaLib, cups, expat, udev, libnotify, xdg_utils }:
 
 let
-  bits = if stdenv.system == "x86_64-linux" then "x64"
-         else "ia32";
 
-  version = "4.0.4";
+  version = "5.0.0-beta.15";
 
   runtimeDeps = [
     udev libnotify
   ];
   deps = (with xorg; [
     libXi libXcursor libXdamage libXrandr libXcomposite libXext libXfixes
-    libXrender libX11 libXtst libXScrnSaver
+    libXrender libX11 libXtst libXScrnSaver libxcb
   ]) ++ [
     gtk2 atk glib pango gdk_pixbuf cairo freetype fontconfig dbus
     gnome2.GConf nss nspr alsaLib cups expat stdenv.cc.cc
@@ -30,10 +28,8 @@ let
 in stdenv.mkDerivation rec {
   name = "franz-${version}";
   src = fetchurl {
-    url = "https://github.com/meetfranz/franz-app/releases/download/${version}/Franz-linux-${bits}-${version}.tgz";
-    sha256 = if bits == "x64" then
-      "0ssym0jfrig474g6j67g1jfybjkxnyhbqqjvrs8z6ihwlyd3rrk5" else
-      "16l9jma2hiwzl9l41yhrwribcgmxca271rq0cfbbm9701mmmciyy";
+    url = "https://github.com/meetfranz/franz/releases/download/v${version}/franz-${version}.tar.gz";
+    sha256 = "1sh6rlz8mmbjmikp5dfvbv45ajgm8x7gz5pb6fgfqdab7jwlvwyy";
   };
 
   # don't remove runtime deps
@@ -43,15 +39,16 @@ in stdenv.mkDerivation rec {
 
   unpackPhase = ''
     tar xzf $src
+    cd franz-${version}
   '';
 
   installPhase = ''
-    patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" Franz
-    patchelf --set-rpath "$out/opt/franz:${stdenv.lib.makeLibraryPath deps}" Franz
+    patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" franz
+    patchelf --set-rpath "$out/opt/franz:${stdenv.lib.makeLibraryPath deps}" franz
 
     mkdir -p $out/bin $out/opt/franz
     cp -r * $out/opt/franz
-    ln -s $out/opt/franz/Franz $out/bin
+    ln -s $out/opt/franz/franz $out/bin
 
     # provide desktop item and icon
     mkdir -p $out/share/applications $out/share/pixmaps
@@ -60,8 +57,8 @@ in stdenv.mkDerivation rec {
   '';
 
   postFixup = ''
-    paxmark m $out/opt/franz/Franz
-    wrapProgram $out/opt/franz/Franz --prefix PATH : ${xdg_utils}/bin
+    paxmark m $out/opt/franz/franz
+    wrapProgram $out/opt/franz/franz --prefix PATH : ${xdg_utils}/bin
   '';
 
   meta = with stdenv.lib; {
