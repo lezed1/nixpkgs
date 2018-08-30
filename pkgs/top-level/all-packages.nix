@@ -20565,6 +20565,8 @@ with pkgs;
 
   putty = callPackage ../applications/networking/remote/putty { };
 
+  openrazer = callPackage ../misc/drivers/openrazer { };
+
   redprl = callPackage ../applications/science/logic/redprl { };
 
   retroarchBare = callPackage ../misc/emulators/retroarch {

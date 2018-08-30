@@ -2723,6 +2723,9 @@ in {
 
   openidc-client = callPackage ../development/python-modules/openidc-client/default.nix {};
 
+  openrazer = disabledIf (!isPy3k) (callPackage ../misc/drivers/openrazer/python.nix {
+    python3Packages = self;
+  });
 
   idna = callPackage ../development/python-modules/idna { };
 
@@ -8861,7 +8864,7 @@ in {
   keyutils = callPackage ../development/python-modules/keyutils { };
 
   klein = callPackage ../development/python-modules/klein { };
- 
+
   koji = callPackage ../development/python-modules/koji { };
 
   kombu = buildPythonPackage rec {

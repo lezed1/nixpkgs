@@ -1992,6 +1992,11 @@
     github = "nlewo";
     name = "Antoine Eiche";
   };
+  lezed1 = {
+    email = "lezed1@gmail.com";
+    github = "lezed1";
+    name = "Zander Bolgar";
+  };
   lheckemann = {
     email = "git@sphalerite.org";
     github = "lheckemann";
